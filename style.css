@@ -1,0 +1,259 @@
+@font-face {
+    font-family: 'PokemonGB';
+    src: url('assets/fonts/PokemonGb-RAeo.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'PokemonGB', sans-serif;
+    color: #333;
+    font-size: 8px;
+}
+
+/* Logo styling */
+.logo {
+    display: flex;
+    justify-content: center;
+    height: 150px;
+}
+
+/* Pokémon container setup */
+.pokemons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+    gap: 25px;
+    width: 100%;
+    justify-content: center;
+}
+
+/* Link styling */
+#pokemon-url {
+    text-decoration: none;
+    color: rgb(154, 154, 154);
+}
+
+/* Individual Pokémon card */
+.pokemon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #000;
+    border-radius: 10px;
+    width: 250px;
+    background-color: rgb(238, 237, 237);
+    box-sizing: border-box;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+#pokemon-img {
+    width: 150px;
+    height: 150px;
+}
+
+/* Buttons section */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+}
+
+#prev,
+#next {
+    font-family: 'PokemonGB', sans-serif;
+    margin-top: 20px;
+    width: 100%;
+    height: 50px;
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.pokemon-card {
+    display: flex;
+    justify-content: center;
+    font-size: 10px;
+    height: 200px;
+    .pokemon-info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background-color: rgb(137, 224, 137);
+        border: 3px solid rgb(48, 108, 64);
+        border-radius: 10px;
+        width: 75%;
+
+        .name-div {
+            font-size: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2px;
+            width: 50%;
+            height: 100%;
+            border: 1px solid gray;
+            border-radius: 10px;
+            background-color: rgb(187, 236, 113);
+            .id {
+                background-color: white;
+                border-radius: 10px;
+                padding: 1em;
+                width: 80%;
+                display: flex;
+                justify-content: center;
+            }
+            .name {
+                background-color: white;
+                border-radius: 10px;
+                padding: 2em 1em;
+                width: 80%;
+                display: flex;
+                justify-content: center;
+            }
+        }
+
+        .card-div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 30%;
+            height: 100%;
+            border: 1px solid gray;
+            border-radius: 10px;
+            background-color: rgb(187, 236, 113);
+            img {
+                width: 170px;
+                height: 170px;
+                background-color: white;
+                border-radius: 10px;
+            }
+        }
+
+        .type-div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 30%;
+            height: 100%;
+            border: 1px solid gray;
+            border-radius: 10px;
+            background-color: rgb(187, 236, 113);
+            .types {
+                background-color: white;
+                border-radius: 10px;
+                padding: 1em 0.5em;
+                width: 80%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                .type {
+                    border-radius: 10px;
+                    padding: 0.5em 1em;
+                    margin: 0.5em;
+                    display: flex;
+                    justify-content: center;
+                }
+            }
+        }
+
+        .abilities-div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 30%;
+            height: 100%;
+            border: 1px solid gray;
+            border-radius: 10px;
+            background-color: rgb(187, 236, 113);
+            .abilities {
+                background-color: white;
+                border-radius: 10px;
+                padding: 1em 0.5em;
+                width: 80%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                .ability {
+                    border-radius: 10px;
+                    display: flex;  
+                    justify-content: center;
+                }
+            }
+        }
+
+        .stats-div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 60%;
+            height: 100%;
+            border: 1px solid gray;
+            border-radius: 10px;
+            background-color: rgb(187, 236, 113);
+            padding: 0 2em;
+            .stats {
+                background-color: white;
+                border-radius: 10px;
+                padding: 1em 0.5em;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 2px;
+
+                .stat {
+                    border-radius: 10px;
+                    width: 70px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+                }
+            }
+        }
+    }
+}
+
+/* Mobile layout adjustments */
+@media screen and (max-width: 480px) {
+    body {
+        font-size: 6px;
+    }
+
+    #logo-img {
+        width: 100%;
+    }
+
+    .pokemons {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+    }
+
+    .pokemon {
+        width: 165px;
+        padding: 5px;
+    }
+
+    #pokemon-img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .buttons #prev,
+    .buttons #next {
+        width: 100%;
+        height: 35px;
+    }
+}

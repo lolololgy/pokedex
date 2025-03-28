@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon details</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="logo">
+        <a href="index.html">
+            <img src="assets/images/logo.png" alt="Pokédex logo" id="logo-img">
+        </a>
+    </div>
+    <div class="pokemon-card">
+        <div class="pokemon-info">
+            <div class="name-div">
+                <div class="id"></div>
+                <div class="name"></div>
+            </div>
+            <div class="card-div">
+                <div class="card"></div>
+            </div>
+            <div class="type-div">
+                <p><b>Type</b></p>
+                <div class="types"></div>
+            </div>
+            <div class="abilities-div">
+                <p><b>Abilities</b></p>
+                <div class="abilities"></div>
+            </div>
+            <div class="stats-div">
+                <p><b>Base Stats</b></p>
+                <div class="stats"></div>
+            </div>
+        </div>
+    </div>
+    <div class="buttons">
+        <button id="prev">
+            << Previous</button>
+                <button id="next">Next >></button>
+    </div>
+</body>
+
+<script>
+    $(document).ready(function () {
+        let currentPokemonId;
+
+        function loadPokemon(id) {
+            $.ajax({
+                url: `https://pokeapi.co/api/v2/pokemon/${id}`,
+                type: 'GET',
+                success: function (pokemon) {
+                    currentPokemonId = pokemon.id;
+
+                    $('title').text(`${pokemon.name.toUpperCase()} - Pokemon Details`);
+                    $('.id').text(`#${pokemon.id}`);
+                    $('.name').empty();
+                    $('.name').append(`<b>${pokemon.name.toUpperCase()}</b>`);
+                    $('.card').empty().append($(`<img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">`));
+
+                    $('.types').empty();
+                    // passende kleuren voor elke type pokemon
+                    const typeColor = {
+                        'normal': '#A8A77A', 'fire': '#EE8130', 'water': '#6390F0',
+                        'electric': '#F7D02C', 'grass': '#7AC74C', 'ice': '#96D9D6',
+                        'fighting': '#C22E28', 'poison': '#A33EA1', 'ground': '#E2BF65',
+                        'flying': '#A98FF3', 'psychic': '#F95587', 'bug': '#A6B91A',
+                        'rock': '#B6A136', 'ghost': '#735797', 'dragon': '#6F35FC',
+                        'dark': '#705746', 'steel': '#B7B7CE', 'fairy': '#D685AD'
+                    }
+                    pokemon.types.forEach(type => {
+                        const color = typeColor[type.type.name] || '#A8A77A';
+                        $('.types').append($(`<span class="type" style="background-color: ${color}">${type.type.name}</span>`));
+                    });
+
+                    $('.abilities').empty();
+                    pokemon.abilities.forEach(ability => $('.abilities').append($(`<span class="ability">${ability.ability.name}</span><br>`)));
+                    
+                    //afkortingen voor de stats
+                    const statShortNames = {
+                        'hp': 'HP', 'attack': 'Atk', 'defense': 'DEF',
+                        'special-attack': 'Sp Atk', 'special-defense': 'Sp Def', 'speed': 'Speed'
+                    };
+                    //Kleuren voor de stats
+                    const statColor = {
+                        'hp': '#FF5959', 'attack': '#FFA35D', 'defense': '#FFEE5A',
+                        'special-attack': '#A0E515', 'special-defense': '#4FC1E9', 'speed': '#A0A0A0'
+                    }
+
+                    $('.stats').empty();
+                    pokemon.stats.forEach(stat => {
+                        const shortStat = statShortNames[stat.stat.name] || stat.stat.name;
+                        const color = statColor[stat.stat.name] || '#A8A77A';
+
+                        $('.stats').append($(`<div class="stat" style="background-color: ${color}"><p>${stat.base_stat}</p><p>${shortStat}</p></div>`));
+                    });
+                },
+                error: () => alert("Pokémon not found. Try another one!")
+            });
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialPokemon = urlParams.get('pokemon') || 1;
+        loadPokemon(initialPokemon);
+
+        $('#next').click(() => loadPokemon(currentPokemonId + 1));
+        $('#prev').click(() => {
+            if (currentPokemonId > 1) loadPokemon(currentPokemonId - 1);
+        });
+    });
+</script>
+
+</html>

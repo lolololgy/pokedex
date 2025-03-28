@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="logo">
+        <a href="index.html">
+            <img src="assets/images/logo.png" alt="Pokédex logo" id="logo-img">
+        </a>
+    </div>
+    <div class="pokemons">
+
+    </div>
+    <div class="buttons">
+        <button id="prev">
+            << Previous</button>
+                <button id="next">Next >></button>
+    </div>
+    <script>
+        $(document).ready(function () {
+            let offset = 0;
+            let limit = 20; //Aantal pokemons per pagina
+
+            PokeApi(offset);
+
+            $('#next').click(function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                offset += limit;
+                PokeApi(offset);
+            });
+
+            $('#prev').click(function () {
+                if (offset > 0) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    offset -= limit;
+                    PokeApi(offset);
+                }
+            });
+        });
+
+        function PokeApi(offset) {
+            let pokemonsDiv = $('.pokemons');
+
+            $.ajax({ // AJAX request naar de PokeAPI
+                url: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=' + offset,
+                type: 'GET',
+                success: function (pokemons) {
+                    console.log(pokemons);
+                    pokemonsDiv.empty();
+                    // div voor elke pokemon
+                    pokemons.results.forEach(pokemon => {
+                        let pokemonLink = $('<a id="pokemon-url" href="pokemon.html?pokemon=' + pokemon.url.split('/')[6] + '"></a>');
+                        let pokemonDiv = $('<div class="pokemon"></div>');
+                        let pokemonName = $('<h2>' + pokemon.url.split('/')[6] + '. ' + pokemon.name + '</h2>');
+                        let pokemonImage = $('<img id="pokemon-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + pokemon.url.split('/')[6] + '.png" alt="' + pokemon.name + '">');
+                        pokemonDiv.append(pokemonImage, pokemonName);
+                        pokemonLink.append(pokemonDiv);
+                        pokemonsDiv.append(pokemonLink);
+                    });
+                },
+                error: function (error) {
+                    console.error(error);
+                    pokemonsDiv.html('<p>Sorry, there was an error loading Pokémon data. Please try again later.</p>');
+                }
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>
