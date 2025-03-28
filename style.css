@@ -46,6 +46,10 @@ body {
     background-color: rgb(238, 237, 237);
     box-sizing: border-box;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+
+    h2 {
+        text-align: center;
+    }
 }
 
 #pokemon-img {
