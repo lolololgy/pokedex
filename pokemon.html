@@ -38,32 +38,35 @@
             </div>
         </div>
     </div>
+
+    <div class="evolution-chain"></div>
+
     <div class="buttons">
         <button id="prev">
             << Previous</button>
                 <button id="next">Next >></button>
     </div>
 </body>
-
 <script>
     $(document).ready(function () {
         let currentPokemonId;
 
+        // Load Pokémon data
         function loadPokemon(id) {
             $.ajax({
                 url: `https://pokeapi.co/api/v2/pokemon/${id}`,
                 type: 'GET',
                 success: function (pokemon) {
                     currentPokemonId = pokemon.id;
+                    // Update the page title and Pokémon details
 
                     $('title').text(`${pokemon.name.toUpperCase()} - Pokemon Details`);
                     $('.id').text(`#${pokemon.id}`);
-                    $('.name').empty();
-                    $('.name').append(`<b>${pokemon.name.toUpperCase()}</b>`);
-                    $('.card').empty().append($(`<img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">`));
+                    $('.name').html(`<b>${pokemon.name.toUpperCase()}</b>`);
+                    $('.card').html(`<img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">`);
 
                     $('.types').empty();
-                    // passende kleuren voor elke type pokemon
+                    // Add a default color for unknown types
                     const typeColor = {
                         'normal': '#A8A77A', 'fire': '#EE8130', 'water': '#6390F0',
                         'electric': '#F7D02C', 'grass': '#7AC74C', 'ice': '#96D9D6',
@@ -71,35 +74,92 @@
                         'flying': '#A98FF3', 'psychic': '#F95587', 'bug': '#A6B91A',
                         'rock': '#B6A136', 'ghost': '#735797', 'dragon': '#6F35FC',
                         'dark': '#705746', 'steel': '#B7B7CE', 'fairy': '#D685AD'
-                    }
+                    };
+
                     pokemon.types.forEach(type => {
                         const color = typeColor[type.type.name] || '#A8A77A';
-                        $('.types').append($(`<span class="type" style="background-color: ${color}">${type.type.name}</span>`));
+                        $('.types').append(`<span class="type" style="background-color: ${color}">${type.type.name}</span>`);
                     });
 
                     $('.abilities').empty();
-                    pokemon.abilities.forEach(ability => $('.abilities').append($(`<span class="ability">${ability.ability.name}</span><br>`)));
-                    
-                    //afkortingen voor de stats
+                    pokemon.abilities.forEach(ability => $('.abilities').append(`<span class="ability">${ability.ability.name}</span><br>`));
+
                     const statShortNames = {
                         'hp': 'HP', 'attack': 'Atk', 'defense': 'DEF',
                         'special-attack': 'Sp Atk', 'special-defense': 'Sp Def', 'speed': 'Speed'
                     };
-                    //Kleuren voor de stats
                     const statColor = {
                         'hp': '#FF5959', 'attack': '#FFA35D', 'defense': '#FFEE5A',
                         'special-attack': '#A0E515', 'special-defense': '#4FC1E9', 'speed': '#A0A0A0'
-                    }
-
+                    };
                     $('.stats').empty();
                     pokemon.stats.forEach(stat => {
                         const shortStat = statShortNames[stat.stat.name] || stat.stat.name;
                         const color = statColor[stat.stat.name] || '#A8A77A';
-
-                        $('.stats').append($(`<div class="stat" style="background-color: ${color}"><p>${stat.base_stat}</p><p>${shortStat}</p></div>`));
+                        $('.stats').append(`<div class="stat" style="background-color: ${color}"><p>${stat.base_stat}</p><p>${shortStat}</p></div>`);
                     });
+
+                    loadEvolutionChain(pokemon.id);
                 },
                 error: () => alert("Pokémon not found. Try another one!")
+            });
+        }
+
+        //evolution chain
+        function loadEvolutionChain(id) {
+            $('.evolution-chain').empty().append('<p>Loading evolution chain...</p>');
+
+            $.ajax({
+                url: `https://pokeapi.co/api/v2/pokemon/${id}/`,
+                type: 'GET',
+                success: function (pokemonData) {
+                    const speciesUrl = pokemonData.species.url;
+
+                    $.ajax({
+                        url: speciesUrl,
+                        type: 'GET',
+                        success: function (speciesData) {
+                            const evolutionChainUrl = speciesData.evolution_chain.url;
+
+                            $.ajax({
+                                url: evolutionChainUrl,
+                                type: 'GET',
+                                success: function (evolutionData) {
+                                    $('.evolution-chain').empty();
+                                    let evoChain = [];
+                                    let evoData = evolutionData.chain;
+
+                                    do {
+                                        evoChain.push({
+                                            name: evoData.species.name,
+                                            id: parseInt(evoData.species.url.split('/').slice(-2, -1)[0])
+                                        });
+                                        evoData = evoData.evolves_to.length > 0 ? evoData.evolves_to[0] : null;
+                                    } while (evoData);
+
+                                    evoChain.sort((a, b) => a.id - b.id);
+
+                                    evoChain.forEach((evo) => {
+                                        $('.evolution-chain').append(
+                                            `<div class="evo" data-id="${evo.id}">
+                                                <a href="pokemon.html?pokemon=${evo.id}">
+                                                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evo.id}.png" alt="${evo.name}">
+                                                </a>
+                                                <p>#${evo.id}</p>
+                                        <p>${evo.name.toUpperCase()}</p>
+                                    </div>`
+                                        );
+                                    });
+
+                                    $('.evo').click(function () {
+                                        const newId = $(this).data('id');
+                                        loadPokemon(newId);
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
             });
         }
 
